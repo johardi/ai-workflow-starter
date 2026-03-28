@@ -17,8 +17,8 @@ A browser-based visual form builder for creating [LinkML](https://linkml.io/) sc
 Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/your-username/linkml-editor.git
-cd linkml-editor
+git clone https://github.com/johardi/ai-workflow-starter
+cd ai-workflow-starter
 
 uv sync
 uv run python manage.py migrate
