@@ -1,0 +1,40 @@
+<form hx-put="{% url 'builder:settings' template.pk %}"
+      hx-target="#toast-container"
+      hx-swap="beforeend"
+      class="space-y-4">
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+    {{ settings_form.title }}
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Schema ID (URI)</label>
+    {{ settings_form.schema_id }}
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Version</label>
+    {{ settings_form.version }}
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">License</label>
+    {{ settings_form.license }}
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+    {{ settings_form.description }}
+  </div>
+
+  <div class="flex justify-end gap-2 pt-2">
+    <button type="button" @click="settingsOpen = false"
+            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+    <button type="submit"
+            class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium"
+            @click="settingsOpen = false">
+      Save Settings
+    </button>
+  </div>
+</form>

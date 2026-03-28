@@ -1,0 +1,18 @@
+{% if enums %}
+<div class="space-y-1.5">
+  {% for e in enums %}
+  <button type="button"
+          @click="
+            const sel = document.querySelector('#config-panel select[name=range_ref]');
+            if (sel) { sel.value = '{{ e.name }}'; sel.dispatchEvent(new Event('change', {bubbles: true})); }
+            enumSelectOpen = false;
+          "
+          class="w-full flex items-center justify-between px-3 py-2 text-xs text-stone-700 bg-stone-50 border border-stone-200 rounded-md hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+    <span class="font-medium">{{ e.name }}</span>
+    <span class="text-stone-400">{{ e.permissible_values.count }} values</span>
+  </button>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-xs text-stone-400 italic py-4 text-center">No enums defined yet. Create one from the left panel first.</p>
+{% endif %}

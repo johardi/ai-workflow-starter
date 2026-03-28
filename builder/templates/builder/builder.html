@@ -1,0 +1,170 @@
+{% extends "builder/base.html" %}
+{% load builder_tags %}
+
+{% block title %}{{ template.title|default:template.name }} — LinkML Builder{% endblock %}
+
+{% block body %}
+<div x-data="builderApp()" class="h-screen flex flex-col">
+  <!-- Top Bar -->
+  <header class="bg-white border-b border-stone-200 px-5 py-2.5 flex items-center justify-between flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <a href="{% url 'builder:list' %}" class="text-stone-400 hover:text-stone-600 transition">&larr;</a>
+      <div class="w-px h-5 bg-stone-200"></div>
+      <div x-data="{ editing: false, title: '{{ template.title|escapejs }}' }">
+        <h1 x-show="!editing"
+            @click="editing = true"
+            class="text-sm font-semibold text-stone-900 cursor-pointer hover:text-stone-600 transition">
+          <span x-text="title"></span>
+        </h1>
+        <input x-show="editing" x-ref="titleInput" x-model="title"
+               @blur="editing = false; $refs.titleInput.closest('div').querySelector('h1').textContent = title"
+               @keydown.enter="editing = false"
+               hx-put="{% url 'builder:settings' template.pk %}"
+               hx-trigger="blur"
+               hx-target="#toast-container"
+               hx-swap="beforeend"
+               hx-include="this"
+               name="title"
+               class="text-sm font-semibold border-b-2 border-amber-400 outline-none bg-transparent"
+               x-init="$watch('editing', v => { if(v) $nextTick(() => $refs.titleInput.focus()) })">
+      </div>
+      <button @click="settingsOpen = true"
+              hx-get="{% url 'builder:settings' template.pk %}"
+              hx-target="#settings-modal-content"
+              class="text-xs text-emerald-600 hover:text-emerald-700 font-medium transition">
+        Settings
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'builder:preview' template.pk %}" target="_blank"
+         class="px-3 py-1.5 text-xs text-stone-500 hover:text-stone-800 font-medium transition">
+        &#9655; Preview
+      </a>
+      <a href="{% url 'builder:export' template.pk %}"
+         class="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-md font-medium transition">
+        Save
+      </a>
+    </div>
+  </header>
+
+  <!-- Three-panel layout -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Left Panel: Field Palette -->
+    <aside class="w-56 bg-white border-r border-stone-200 overflow-y-auto flex-shrink-0 p-4">
+      {% include "builder/partials/palette.html" %}
+    </aside>
+
+    <!-- Center Panel: Canvas -->
+    <main class="flex-1 overflow-y-auto bg-canvas p-6" @click.self="deselectField()">
+      <div id="canvas">
+        {% for section in sections %}
+          {% include "builder/partials/section_card.html" %}
+        {% endfor %}
+      </div>
+      <button hx-post="{% url 'builder:section_create' template.pk %}"
+              hx-target="#canvas"
+              hx-swap="beforeend"
+              class="mt-4 text-xs text-stone-400 hover:text-emerald-600 font-medium transition">
+        + Add Section
+      </button>
+    </main>
+
+    <!-- Right Panel: Config (always visible) -->
+    <aside class="w-72 bg-white border-l border-stone-200 overflow-y-auto flex-shrink-0">
+      <div id="config-panel" class="p-4">
+        <div class="flex flex-col items-center justify-center text-stone-400 py-16">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-3 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+          </svg>
+          <p class="text-xs font-medium">No field selected</p>
+          <p class="text-xs text-stone-300 mt-1">Click a field to configure it</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Settings Modal -->
+  <div x-show="settingsOpen" x-cloak
+       class="fixed inset-0 bg-black/30 z-40 flex items-center justify-center"
+       @click.self="settingsOpen = false">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6" @click.stop>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-bold text-stone-900">Schema Settings</h2>
+        <button @click="settingsOpen = false" class="text-stone-400 hover:text-stone-600 transition">&times;</button>
+      </div>
+      <div id="settings-modal-content">
+        {% include "builder/partials/settings_modal.html" %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Enum Modal -->
+  <div x-show="enumEditOpen" x-cloak
+       class="fixed inset-0 bg-black/30 z-40 flex items-center justify-center"
+       @click.self="enumEditOpen = false"
+       @closeenumedit.window="enumEditOpen = false">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6 max-h-[80vh] flex flex-col overflow-hidden" @click.stop>
+      <div class="flex items-center justify-between mb-4 flex-shrink-0">
+        <h2 class="text-sm font-bold text-stone-900">
+          <i class="fa-solid fa-list text-stone-400 mr-1.5"></i> Enum
+        </h2>
+        <button @click="enumEditOpen = false" class="text-stone-400 hover:text-stone-600 transition">&times;</button>
+      </div>
+      <div id="enum-edit-content" class="flex-1 overflow-hidden">
+      </div>
+    </div>
+  </div>
+
+  <!-- Select Enum Modal -->
+  <div x-show="enumSelectOpen" x-cloak
+       class="fixed inset-0 bg-black/30 z-40 flex items-center justify-center"
+       @click.self="enumSelectOpen = false">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[60vh] overflow-y-auto" @click.stop>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-bold text-stone-900">
+          <i class="fa-solid fa-list text-stone-400 mr-1.5"></i> Select Enum
+        </h2>
+        <button @click="enumSelectOpen = false" class="text-stone-400 hover:text-stone-600 transition">&times;</button>
+      </div>
+      <div id="enum-select-content">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% load static %}
+<script src="{% static 'builder/js/builder.js' %}"></script>
+<script>
+function builderApp() {
+  return {
+    settingsOpen: false,
+    enumEditOpen: false,
+    enumSelectOpen: false,
+    activeFieldId: null,
+    selectField(fieldId) {
+      document.querySelectorAll('.field-row').forEach(el => el.classList.remove('field-active'));
+      const row = document.getElementById('field-' + fieldId);
+      if (row) row.classList.add('field-active');
+      this.activeFieldId = fieldId;
+      document.body.dataset.activeFieldId = fieldId;
+    },
+    deselectField() {
+      if (!this.activeFieldId) return;
+      document.querySelectorAll('.field-row').forEach(el => el.classList.remove('field-active'));
+      this.activeFieldId = null;
+      delete document.body.dataset.activeFieldId;
+      document.getElementById('config-panel').innerHTML = `
+        <div class="flex flex-col items-center justify-center text-stone-400 py-16">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-3 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+          </svg>
+          <p class="text-xs font-medium">No field selected</p>
+          <p class="text-xs text-stone-300 mt-1">Click a field to configure it</p>
+        </div>`;
+    }
+  }
+}
+</script>
+{% endblock %}

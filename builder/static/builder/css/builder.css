@@ -1,0 +1,351 @@
+/* ========================================
+   LinkML Form Builder — Studio Theme
+   ======================================== */
+
+/* Alpine.js cloak */
+[x-cloak] { display: none !important; }
+
+/* --- Global form inputs --- */
+#config-panel input[type="text"],
+#config-panel input[type="number"],
+#config-panel input[type="url"],
+#config-panel input[type="email"],
+#config-panel textarea,
+#config-panel select {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.375rem;
+  background: #fafaf8;
+  color: #1c1917;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#config-panel input[type="text"]:focus,
+#config-panel input[type="number"]:focus,
+#config-panel input[type="url"]:focus,
+#config-panel input[type="email"]:focus,
+#config-panel textarea:focus,
+#config-panel select:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+}
+
+#config-panel textarea {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+input[type="checkbox"] {
+  accent-color: #059669;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+/* --- Panel section headers (shared style for left + right panels) --- */
+.panel-heading {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a8a29e;
+}
+
+/* --- Sortable drag states --- */
+.sortable-ghost {
+  opacity: 0.4;
+  background: #fef3c7;
+  border-radius: 0.5rem;
+}
+
+.sortable-chosen {
+  box-shadow: 0 0 0 2px #f59e0b;
+  border-radius: 0.5rem;
+}
+
+/* --- Palette tile hover --- */
+.palette-tile:hover {
+  border-color: #059669 !important;
+  background: #ecfdf5 !important;
+}
+
+/* --- Config panel transitions --- */
+#config-panel {
+  transition: opacity 0.15s ease;
+}
+
+/* --- Field card styles --- */
+
+.field-row {
+  position: relative;
+  /* Extend hit area left to cover the action menu */
+  margin-left: -3rem;
+  padding-left: 3rem;
+}
+
+.field-card {
+  background: white;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.field-card:hover {
+  border-color: #d6d3d1;
+  background-color: #fafaf8;
+}
+
+/* Left popup action menu */
+.field-actions {
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.field-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  color: #78716c;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.field-action-btn:hover {
+  background-color: #f5f5f4;
+  color: #1c1917;
+}
+
+.field-handle {
+  cursor: grab;
+}
+
+.field-handle:active {
+  cursor: grabbing;
+}
+
+/* Hover state — show actions and highlight */
+.field-row:hover .field-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.field-row:hover .field-card {
+  border-color: #d6d3d1;
+  background-color: #fafaf8;
+}
+
+/* Suppress hover menus during drag */
+.is-dragging .field-row:hover .field-actions {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Active (selected) field — also override hover */
+.field-active .field-card,
+.field-active:hover .field-card,
+.field-active .field-card:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  background-color: #fffbeb;
+}
+
+/* --- Section card refinement --- */
+.section-card {
+  border-color: #e7e5e4 !important;
+}
+
+/* --- Tab buttons --- */
+.config-tab {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-bottom: 2px solid transparent;
+  color: #a8a29e;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.config-tab:hover {
+  color: #57534e;
+}
+
+.config-tab-active {
+  color: #059669 !important;
+  border-bottom-color: #059669 !important;
+}
+
+/* --- Enum form layout --- */
+#enum-edit-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#enum-edit-content form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+#enum-edit-content textarea {
+  min-height: 3rem;
+  max-height: 4rem;
+  resize: vertical;
+  font-size: 0.75rem;
+}
+
+/* --- Enum form: permissible value cards --- */
+
+.pv-scroll-area {
+  padding: 0.25rem;
+}
+
+.pv-card {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  background: #fafaf8;
+  transition: border-color 0.15s ease;
+  overflow: hidden;
+}
+
+.pv-card:focus-within {
+  border-color: #d6d3d1;
+}
+
+/* Drag zone — left */
+.pv-drag-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  flex-shrink: 0;
+  color: #d6d3d1;
+  font-size: 0.65rem;
+  cursor: grab;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  border-right: 1px solid #e7e5e4;
+}
+
+.pv-drag-zone:hover {
+  background-color: #f5f5f4;
+  color: #78716c;
+}
+
+.pv-drag-zone:active {
+  cursor: grabbing;
+}
+
+/* Body zone — center */
+.pv-body {
+  flex: 1;
+  padding: 0.375rem 0.5rem;
+  min-width: 0;
+}
+
+.pv-body-row {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 0.25rem;
+}
+
+.pv-meaning-field {
+  flex: 0 0 38%;
+}
+
+/* Delete zone — right */
+.pv-delete-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  flex-shrink: 0;
+  color: #d6d3d1;
+  font-size: 0.65rem;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  border-left: 1px solid #e7e5e4;
+}
+
+.pv-delete-zone:hover {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+/* PV card inputs */
+.pv-card input[type="text"],
+.pv-card textarea {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.25rem;
+  background: white;
+  color: #1c1917;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pv-card textarea {
+  min-height: 0;
+  resize: vertical;
+}
+
+.pv-card input[type="text"]:focus,
+.pv-card textarea:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+}
+
+/* Drag states */
+.pv-ghost {
+  opacity: 0.4;
+  background: #fef3c7;
+}
+
+.pv-chosen {
+  box-shadow: 0 0 0 2px #f59e0b;
+}
+
+/* Scrollbar styling for PV area */
+.pv-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.pv-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pv-scroll-area::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 2px;
+}
+
+.pv-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}

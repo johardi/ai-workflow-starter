@@ -1,0 +1,59 @@
+<form hx-put="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
+      hx-target="#field-{{ field.pk }}"
+      hx-swap="outerHTML"
+      hx-trigger="change delay:400ms, blur from:find input delay:400ms"
+      class="space-y-3">
+  <input type="hidden" name="_tab" value="constraints">
+
+  {% if field.range_type == "string" %}
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Pattern (regex)</label>
+    {{ constraints_form.pattern }}
+  </div>
+  {% endif %}
+
+  {% if field.range_type == "integer" or field.range_type == "float" %}
+  <div class="grid grid-cols-2 gap-2">
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Min Value</label>
+      {{ constraints_form.minimum_value }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Max Value</label>
+      {{ constraints_form.maximum_value }}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if field.range_type == "enum" %}
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Enum Reference</label>
+    {{ constraints_form.range_ref }}
+    <p class="text-[0.625rem] text-stone-400 mt-1">
+      <button type="button"
+              @click="enumSelectOpen = true"
+              hx-get="{% url 'builder:enum_list' template.pk %}?mode=select"
+              hx-target="#enum-select-content"
+              class="text-emerald-600 hover:underline">Select enum</button>
+    </p>
+  </div>
+  {% endif %}
+
+  {% if field.range_type == "object" %}
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Target Class</label>
+    {{ constraints_form.range_ref }}
+  </div>
+  {% endif %}
+
+  <div class="grid grid-cols-2 gap-2">
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Min Cardinality</label>
+      {{ constraints_form.minimum_cardinality }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Max Cardinality</label>
+      {{ constraints_form.maximum_cardinality }}
+    </div>
+  </div>
+</form>

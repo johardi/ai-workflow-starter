@@ -1,0 +1,24 @@
+[project]
+name = "linkml-editor"
+version = "0.1.0"
+description = "A browser-based LinkML form builder"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.1",
+    "linkml>=1.8",
+    "linkml-runtime>=1.7",
+    "psycopg[binary]>=3.1",
+    "python-slugify>=8.0",
+    "django-htmx>=1.17",
+    "whitenoise>=6.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-django>=4.8",
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ["."]

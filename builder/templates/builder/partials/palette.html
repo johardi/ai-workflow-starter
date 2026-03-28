@@ -1,0 +1,33 @@
+{% load builder_tags %}
+
+<p class="panel-heading mb-3">Add Field</p>
+
+<p class="panel-heading mb-2">Input</p>
+<div class="grid grid-cols-1 gap-1.5 mb-4">
+  {% for value, label in range_types %}
+  <button class="palette-tile flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-stone-600 bg-stone-50 border border-stone-200 rounded-md hover:border-emerald-500 hover:bg-emerald-50 transition text-left"
+          data-range-type="{{ value }}"
+          hx-post="{% url 'builder:field_create' template.pk sections.0.pk %}"
+          hx-vals='{"range_type": "{{ value }}"}'
+          hx-target="#section-fields-{{ sections.0.pk }}"
+          hx-swap="beforeend">
+    <span class="w-4 text-center text-stone-400 text-[0.65rem]">{{ value|field_icon }}</span>
+    {{ label }}
+  </button>
+  {% endfor %}
+</div>
+
+<div class="flex items-center justify-between mb-2">
+  <p class="panel-heading">Enum</p>
+  <button hx-get="{% url 'builder:enum_list' template.pk %}?mode=form"
+          hx-target="#enum-edit-content"
+          @click="enumEditOpen = true"
+          class="text-[0.625rem] text-emerald-600 hover:text-emerald-700 font-medium transition">
+    <i class="fa-solid fa-plus mr-0.5"></i> Add
+  </button>
+</div>
+<div id="enum-palette-list"
+     hx-get="{% url 'builder:enum_list' template.pk %}?mode=palette"
+     hx-trigger="load, enumListChanged from:body"
+     hx-target="this">
+</div>

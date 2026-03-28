@@ -1,0 +1,29 @@
+<form hx-put="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
+      hx-target="#field-{{ field.pk }}"
+      hx-swap="outerHTML"
+      hx-trigger="change delay:400ms, blur from:find input delay:400ms"
+      class="space-y-3">
+  <input type="hidden" name="_tab" value="advanced">
+
+  <div class="flex items-center gap-5">
+    <label class="flex items-center gap-1.5 text-xs text-stone-600">
+      {{ advanced_form.identifier }}
+      <span>Identifier</span>
+    </label>
+    <label class="flex items-center gap-1.5 text-xs text-stone-600">
+      {{ advanced_form.key }}
+      <span>Key</span>
+    </label>
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Default Value <span class="text-[0.625rem] text-stone-400">(ifabsent)</span></label>
+    {{ advanced_form.ifabsent }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Deprecated</label>
+    {{ advanced_form.deprecated }}
+    <p class="text-[0.625rem] text-stone-400 mt-1">Leave empty if not deprecated</p>
+  </div>
+</form>

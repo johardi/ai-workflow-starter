@@ -1,0 +1,150 @@
+{% if saved %}
+<div class="text-xs text-emerald-600 font-medium mb-3 flex items-center gap-1 flex-shrink-0">
+  <i class="fa-solid fa-check"></i> Enum saved successfully
+</div>
+{% endif %}
+
+<form {% if enum %}
+        hx-post="{% url 'builder:enum_detail' template.pk enum.pk %}"
+      {% else %}
+        hx-post="{% url 'builder:enum_list' template.pk %}"
+      {% endif %}
+      hx-target="#enum-edit-content"
+      hx-swap="innerHTML"
+      x-data="enumFormManager()"
+      x-init="initSortablePV()"
+      class="flex flex-col h-full overflow-hidden">
+
+  <!-- Fixed header: Enum name + description -->
+  <div class="space-y-3 mb-4 flex-shrink-0">
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Enum Name</label>
+      {{ enum_form.name }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-stone-500 mb-1">Description</label>
+      {{ enum_form.description }}
+    </div>
+  </div>
+
+  <!-- Scrollable PV area -->
+  <div class="border-t border-stone-200 pt-3 flex-1 flex flex-col overflow-hidden min-h-0">
+    <div class="flex items-center justify-between mb-2 flex-shrink-0">
+      <p class="text-xs font-medium text-stone-500">Permissible Values</p>
+      <button type="button" @click="addRow()" class="text-[0.625rem] text-emerald-600 hover:text-emerald-700 font-medium transition">
+        <i class="fa-solid fa-plus mr-0.5"></i> Add Value
+      </button>
+    </div>
+
+    {{ pv_formset.management_form }}
+
+    <div class="pv-scroll-area flex-1 overflow-y-auto min-h-0" id="pv-list">
+      {% for pv_form in pv_formset %}
+      <div class="pv-card" x-show="!removed.includes({{ forloop.counter0 }})" data-row-index="{{ forloop.counter0 }}">
+        <div class="pv-drag-zone pv-drag-handle" title="Drag to reorder">
+          <i class="fa-solid fa-grip-vertical"></i>
+        </div>
+        <div class="pv-body">
+          <div class="pv-body-row">
+            <div class="flex-1">{{ pv_form.value }}</div>
+            <div class="pv-meaning-field">{{ pv_form.meaning }}</div>
+          </div>
+          {{ pv_form.description }}
+        </div>
+        <button type="button" @click="removeRow({{ forloop.counter0 }})" class="pv-delete-zone" title="Remove">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="hidden">{{ pv_form.id }} {{ pv_form.rank }} {{ pv_form.DELETE }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Fixed footer: Save buttons -->
+  <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-stone-200 flex-shrink-0">
+    <button type="submit"
+            class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 px-4 py-1.5 rounded-md font-medium transition">
+      Save
+    </button>
+    <button type="submit"
+            @click="setTimeout(() => enumEditOpen = false, 100)"
+            class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md font-medium transition">
+      Save and Close
+    </button>
+  </div>
+</form>
+
+<script>
+function enumFormManager() {
+  return {
+    removed: [],
+    removeRow(index) {
+      this.removed.push(index);
+      const row = document.querySelector(`[data-row-index="${index}"]`);
+      if (row) {
+        const delCheckbox = row.querySelector('input[type="checkbox"][name*="DELETE"]');
+        if (delCheckbox) delCheckbox.checked = true;
+      }
+    },
+    addRow() {
+      const list = document.getElementById('pv-list');
+      const mgmt = document.querySelector('input[name$="TOTAL_FORMS"]');
+      const total = parseInt(mgmt.value);
+      const prefix = 'permissible_values';
+
+      const card = document.createElement('div');
+      card.className = 'pv-card';
+      card.dataset.rowIndex = total;
+
+      card.innerHTML = `
+        <div class="pv-drag-zone pv-drag-handle" title="Drag to reorder">
+          <i class="fa-solid fa-grip-vertical"></i>
+        </div>
+        <div class="pv-body">
+          <div class="pv-body-row">
+            <div class="flex-1">
+              <input type="text" name="${prefix}-${total}-value" class="border rounded px-2 py-1" placeholder="Label *" required>
+            </div>
+            <div class="pv-meaning-field">
+              <input type="text" name="${prefix}-${total}-meaning" class="border rounded px-2 py-1" placeholder="Meaning (IRI)">
+            </div>
+          </div>
+          <textarea name="${prefix}-${total}-description" class="border rounded px-2 py-1" placeholder="Description" rows="1"></textarea>
+        </div>
+        <button type="button" onclick="this.closest('.pv-card').style.display='none'; var cb=this.closest('.pv-card').querySelector('input[name*=DELETE]'); if(cb) cb.checked=true;" class="pv-delete-zone" title="Remove">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="hidden">
+          <input type="hidden" name="${prefix}-${total}-id" value="">
+          <input type="hidden" name="${prefix}-${total}-rank" value="${total}">
+          <input type="checkbox" name="${prefix}-${total}-DELETE" style="display:none">
+        </div>
+      `;
+
+      list.appendChild(card);
+      mgmt.value = total + 1;
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      requestAnimationFrame(() => {
+        card.querySelector('input[name$="-value"]').focus();
+      });
+    },
+    initSortablePV() {
+      const list = document.getElementById('pv-list');
+      if (list && typeof Sortable !== 'undefined') {
+        new Sortable(list, {
+          animation: 150,
+          handle: '.pv-drag-handle',
+          ghostClass: 'pv-ghost',
+          chosenClass: 'pv-chosen',
+          onEnd: function() {
+            list.querySelectorAll('.pv-card').forEach((card, i) => {
+              const rankInput = card.querySelector('input[name$="-rank"]');
+              if (rankInput) rankInput.value = i;
+            });
+          }
+        });
+      }
+    }
+  }
+}
+</script>

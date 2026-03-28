@@ -1,0 +1,43 @@
+<form hx-put="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
+      hx-target="#field-{{ field.pk }}"
+      hx-swap="outerHTML"
+      hx-trigger="change delay:400ms, blur from:find input delay:400ms, blur from:find textarea delay:400ms"
+      class="space-y-3">
+  <input type="hidden" name="_tab" value="basic">
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Label</label>
+    {{ basic_form.title }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Name <span class="text-[0.625rem] text-stone-400">(identifier)</span></label>
+    {{ basic_form.name }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Description</label>
+    {{ basic_form.description }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Help Text</label>
+    {{ basic_form.help_text }}
+  </div>
+
+  <div>
+    <label class="block text-xs font-medium text-stone-500 mb-1">Placeholder Text</label>
+    {{ basic_form.placeholder }}
+  </div>
+
+  <div class="flex items-center gap-5 pt-1">
+    <label class="flex items-center gap-1.5 text-xs text-stone-600">
+      {{ basic_form.required }}
+      <span>Required</span>
+    </label>
+    <label class="flex items-center gap-1.5 text-xs text-stone-600">
+      {{ basic_form.multivalued }}
+      <span>Multivalued</span>
+    </label>
+  </div>
+</form>

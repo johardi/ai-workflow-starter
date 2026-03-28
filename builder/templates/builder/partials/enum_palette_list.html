@@ -1,0 +1,19 @@
+{% if enums %}
+{% for e in enums %}
+<div class="flex items-center justify-between py-1.5 px-2 text-xs text-stone-600 bg-stone-50 border border-stone-200 rounded-md mb-1.5 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition"
+     hx-get="{% url 'builder:enum_detail' template.pk e.pk %}?mode=form"
+     hx-target="#enum-edit-content"
+     @click="enumEditOpen = true">
+  <span class="truncate font-medium">{{ e.name }} <span class="text-stone-400 font-normal">({{ e.permissible_values.count }})</span></span>
+  <button hx-delete="{% url 'builder:enum_detail' template.pk e.pk %}"
+          hx-confirm="Delete enum '{{ e.name }}'?"
+          class="text-stone-400 hover:text-red-500 transition flex-shrink-0 ml-2"
+          title="Delete"
+          @click.stop>
+    <i class="fa-solid fa-trash-can text-[0.6rem]"></i>
+  </button>
+</div>
+{% endfor %}
+{% else %}
+<p class="text-[0.625rem] text-stone-400 italic px-1">No enums yet</p>
+{% endif %}

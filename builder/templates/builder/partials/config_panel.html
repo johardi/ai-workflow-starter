@@ -1,0 +1,38 @@
+{% load builder_tags %}
+
+<div x-data="{ tab: 'basic' }">
+  <!-- Header -->
+  <div class="flex items-center gap-2 mb-4 pb-3 border-b border-stone-200">
+    <span class="text-xs text-stone-400"><i class="{{ field.range_type|field_icon_class }}"></i></span>
+    <p class="panel-heading" style="margin: 0;">Field Settings</p>
+    <span class="text-[0.625rem] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded font-mono">{{ field.range_type }}</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex border-b border-stone-200 mb-4">
+    <button @click="tab = 'basic'"
+            :class="tab === 'basic' ? 'config-tab-active' : ''"
+            class="config-tab">Basic</button>
+    <button @click="tab = 'constraints'"
+            :class="tab === 'constraints' ? 'config-tab-active' : ''"
+            class="config-tab">Constraints</button>
+    <button @click="tab = 'advanced'"
+            :class="tab === 'advanced' ? 'config-tab-active' : ''"
+            class="config-tab">Advanced</button>
+  </div>
+
+  <!-- Basic Tab -->
+  <div x-show="tab === 'basic'">
+    {% include "builder/partials/config_basic.html" %}
+  </div>
+
+  <!-- Constraints Tab -->
+  <div x-show="tab === 'constraints'">
+    {% include "builder/partials/config_constraints.html" %}
+  </div>
+
+  <!-- Advanced Tab -->
+  <div x-show="tab === 'advanced'">
+    {% include "builder/partials/config_advanced.html" %}
+  </div>
+</div>

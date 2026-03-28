@@ -1,0 +1,82 @@
+<div class="space-y-4">
+  {% for e in enums %}
+  <div class="border border-gray-200 rounded-lg p-3">
+    <div class="flex items-center justify-between mb-2">
+      <h4 class="font-semibold text-gray-800">{{ e.name }}</h4>
+      <button hx-delete="{% url 'builder:enum_detail' template.pk e.pk %}"
+              hx-target="#enum-editor"
+              hx-confirm="Delete this enum?"
+              class="text-gray-400 hover:text-red-500 text-sm">&times;</button>
+    </div>
+    {% if e.description %}
+    <p class="text-xs text-gray-500 mb-2">{{ e.description }}</p>
+    {% endif %}
+    <div class="space-y-1 mb-2">
+      {% for pv in e.permissible_values.all %}
+      <div class="flex items-center gap-2 text-sm">
+        <span class="font-mono text-gray-700">{{ pv.value }}</span>
+        {% if pv.description %}
+        <span class="text-gray-400">- {{ pv.description }}</span>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="text-xs text-gray-400 italic">No values yet</p>
+      {% endfor %}
+    </div>
+    <button hx-get="{% url 'builder:enum_detail' template.pk e.pk %}"
+            hx-target="#enum-editor"
+            class="text-xs text-emerald-600 hover:underline">Edit values</button>
+  </div>
+  {% empty %}
+  <p class="text-gray-400 text-sm">No enums defined yet.</p>
+  {% endfor %}
+
+  {% if pv_formset and enum %}
+  <div class="border-t border-gray-200 pt-4">
+    <h4 class="font-semibold text-sm mb-2">Edit: {{ enum.name }}</h4>
+    <form hx-post="{% url 'builder:enum_detail' template.pk enum.pk %}"
+          hx-target="#enum-editor">
+      {{ pv_formset.management_form }}
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-gray-500">
+            <th class="pb-1">Value</th>
+            <th class="pb-1">Description</th>
+            <th class="pb-1">Meaning</th>
+            <th class="pb-1 w-8"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pv_form in pv_formset %}
+          <tr>
+            <td>{{ pv_form.value }} {{ pv_form.id }} {{ pv_form.rank }}</td>
+            <td>{{ pv_form.description }}</td>
+            <td>{{ pv_form.meaning }}</td>
+            <td>{{ pv_form.DELETE }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit" class="mt-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded">
+        Save Values
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- Add new enum -->
+  <div class="border-t border-gray-200 pt-4">
+    <h4 class="text-sm font-semibold mb-2">Add New Enum</h4>
+    <form hx-post="{% url 'builder:enum_list' template.pk %}"
+          hx-target="#enum-editor"
+          class="flex gap-2">
+      <input type="text" name="name" placeholder="Enum name" required
+             class="border rounded px-2 py-1 text-sm flex-1">
+      <input type="text" name="description" placeholder="Description"
+             class="border rounded px-2 py-1 text-sm flex-1">
+      <button type="submit" class="text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded">
+        Add
+      </button>
+    </form>
+  </div>
+</div>
