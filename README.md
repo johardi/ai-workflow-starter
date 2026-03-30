@@ -1,64 +1,206 @@
-# LinkML Editor
+# Stanford Computational Medicine Coding Agents Onboarding
 
-A browser-based visual form builder for creating [LinkML](https://linkml.io/) schemas — without writing code.
+This repository is used by the [Stanford Division of Computational Medicine](https://computationalmedicine.stanford.edu) to onboard contributors to coding-agent-assisted software development. The primary focus is learning a practical GitHub workflow with coding agents: working from issues, using branches, opening pull requests, and using local agent tooling effectively.
 
-## Features
+## What This Repository Is For
 
-- Visual three-panel builder (palette, canvas, config)
-- Typed fields with configurable constraints
-- Enum management with permissible values
-- Drag-and-drop field ordering
-- Auto-saving configuration
-- One-click LinkML YAML export with validation
-- Live form preview
+Use this repository to practice:
 
-## Quick Start
+- Setting up a local coding-agent workflow with Codex
+- Working from GitHub issues and pull requests
+- Using skills to standardize issue execution and front-end work
+- Using MCP servers to give Codex better browser, code-navigation, and documentation context
+- Contributing through a fork-based GitHub workflow
 
-Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/).
+## Prerequisites
+
+These instructions are macOS-first and assume you have [Homebrew](https://brew.sh/) installed.
+
+### 1. Install Codex
+
+Install Codex with Homebrew:
 
 ```bash
-git clone https://github.com/johardi/ai-workflow-starter
-cd ai-workflow-starter
+brew install --cask codex
+```
 
+Alternative install with npm:
+
+```bash
+npm install -g @openai/codex
+```
+
+Then start Codex and sign in:
+
+```bash
+codex
+```
+
+### 2. Install GitHub CLI
+
+Install `gh`:
+
+```bash
+brew install gh
+```
+
+Authenticate with GitHub:
+
+```bash
+gh auth login
+```
+
+### 3. Install uv
+
+This project uses [`uv`](https://docs.astral.sh/uv/) to install dependencies and run the Django server.
+
+```bash
+brew install uv
+```
+
+### 4. Install Node.js
+
+The skills installer commands below use `npx`.
+
+```bash
+brew install node
+```
+
+### 5. Install Required Skills
+
+Install the skills used in this onboarding workflow.
+
+#### # Install the GitHub issue workflow skill
+
+```bash
+npx skills add https://github.com/giuseppe-trisciuoglio/developer-kit --skill github-issue-workflow
+```
+
+When you run `npx skills add ...`, the installer will automatically:
+
+- Clone the target repository for the skill package
+- Fetch the requested skill, such as `github-issue-workflow`
+- Store the installed skill in the project-level `.agents/skills` directory used by Codex
+
+For each skill install, use the same prompt flow:
+
+1. When asked about additional agents, press `Enter` to skip
+2. When asked for the installation scope, select `Project`
+3. When asked whether to proceed, select `Yes`
+
+#### # Install the front-end design skill
+
+Repeat the same process as above:
+
+```bash
+npx skills add https://github.com/anthropics/skills --skill frontend-design
+```
+
+## Install MCP Servers for Codex
+
+These MCP servers are recommended for this onboarding workflow:
+
+- `Playwright`: browser automation and UI verification
+- `Serena`: semantic code navigation and editing support
+- `Context7`: up-to-date library and framework documentation
+
+### Playwright
+
+Install Playwright MCP directly with Codex:
+
+```bash
+codex mcp add playwright npx "@playwright/mcp@latest"
+```
+
+### Serena
+
+Serena is useful for symbol-aware code exploration in larger repositories.
+
+Add Serena to Codex:
+
+```bash
+codex mcp add serena uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context codex --no-dashboard --project "$PWD"
+```
+
+### Context7
+
+You can add Context7 to Codex with either a local `npx` server or the hosted MCP endpoint.
+
+Local install with Codex:
+
+```bash
+codex mcp add context7 npx -y @upstash/context7-mcp
+```
+
+Add the API key by adding these lines in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.context7.env]
+CONTEXT7_API_KEY = "your-api-key-string"
+```
+
+Create an account in https://context7.com/ and generate the API key.
+
+## Fork And Clone Your Copy
+
+Start from your own fork so your work happens in your GitHub account before you open a pull request upstream.
+
+### 1. Fork the repository on GitHub
+
+Use the GitHub web UI to fork the upstream repository into your own account.
+
+### 2. Clone your fork locally
+
+With GitHub CLI:
+
+```bash
+git clone git@github.com:<your-github-username>/ai-workflow-starter.git
+cd ai-workflow-starter
+```
+
+### 3. Add the upstream remote
+
+```bash
+git remote add upstream git@github.com:johardi/ai-workflow-starter.git
+git remote -v
+```
+
+## Run The Project Locally
+
+Install dependencies:
+
+```bash
 uv sync
+```
+
+Run database migrations:
+
+```bash
 uv run python manage.py migrate
+```
+
+Start the local server:
+
+```bash
 uv run python manage.py runserver
 ```
 
-Open [http://localhost:8000](http://localhost:8000).
+Then open [http://localhost:8000](http://localhost:8000).
 
-## Project Structure
 
-```
-linkml-editor/
-├── builder/               # Main Django app
-│   ├── models.py          # FormTemplate, FormSection, FormField, EnumDefinition
-│   ├── views.py           # HTMX-aware class-based views
-│   ├── forms.py           # ModelForms and formsets
-│   ├── services/          # LinkML builder and exporter
-│   ├── templates/builder/ # Django templates (base + HTMX partials)
-│   └── static/builder/    # CSS (Studio Theme) and JS (SortableJS)
-├── config/                # Django settings
-└── pyproject.toml         # Python project config
-```
+## About The Practice App
 
-## Contributing
+This repository currently contains a Django-based LinkML editor application. It is included as a realistic practice codebase for onboarding contributors to coding-agent workflows, not as the primary subject of the README.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Make your changes
-4. Run the dev server and verify manually at `localhost:8000`
-5. Format code: `uvx ruff format .`
-6. Commit your changes (`git commit -m "Add my feature"`)
-7. Push to your branch (`git push origin feature/my-feature`)
-8. Open a Pull Request
+## References
 
-### Guidelines
-
-- Follow existing patterns: HTMX partials for server responses, Alpine.js for client state
-- Keep templates in `builder/templates/builder/partials/` for HTMX-swapped fragments
-- Use the Studio Theme conventions (stone colors, DM Sans font, emerald accents) for new UI
-- Read `CLAUDE.md` for architecture context and common patterns
+- [Stanford Division of Computational Medicine](https://computationalmedicine.stanford.edu)
+- [OpenAI Codex](https://github.com/openai/codex)
+- [GitHub CLI](https://cli.github.com/manual/)
+- [uv](https://docs.astral.sh/uv/)
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp)
+- [Serena](https://github.com/mcp-research/oraios__serena)
+- [Context7](https://github.com/upstash/context7)
 
 ## License
 
