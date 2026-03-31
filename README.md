@@ -50,6 +50,33 @@ Authenticate with GitHub:
 gh auth login
 ```
 
+If you want to use `gh` commands from inside Codex, authenticate from inside the Codex terminal, not in a separate shell session. Type the following as a normal command at the Codex prompt:
+
+```bash
+gh auth login -h github.com -p https -w
+```
+
+This starts GitHub CLI's browser/device login flow. After you run it in Codex:
+
+1. Copy the one-time code that `gh` prints in Codex
+2. Open `https://github.com/login/device`
+3. Paste the code and approve access
+4. Return to Codex and verify the login:
+
+```bash
+gh auth status -h github.com
+```
+
+If `gh auth status` reports that the token is invalid, clear the saved account and repeat the login flow:
+
+```bash
+gh auth logout -h github.com -u <your-github-username>
+gh auth login -h github.com -p https -w
+gh auth status -h github.com
+```
+
+Codex may ask for elevated permission for these commands because GitHub CLI stores auth state in your home directory.
+
 ### 3. Install uv
 
 This project uses [`uv`](https://docs.astral.sh/uv/) to install dependencies and run the Django server.
