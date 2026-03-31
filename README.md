@@ -44,6 +44,22 @@ Install `gh`:
 brew install gh
 ```
 
+Authenticate with GitHub:
+
+```bash
+gh auth login
+```
+
+Edit `~/.codex/config.toml` to configure Codex sandbox:
+
+```
+[sandbox_workspace_write]
+network_access = true
+
+[shell_environment_policy]
+inherit = "core"
+include_only = ["PATH", "HOME", "USER", "SHELL", "GH_TOKEN"]
+```
 
 ### 3. Install uv
 
@@ -184,33 +200,11 @@ Then open [http://localhost:8000](http://localhost:8000).
 
 ## Start Using Codex
 
-When you are ready to use Codex to work on GitHub issues, authenticate `gh` from inside the Codex terminal. Type this as a normal command at the Codex prompt:
+Use the command below to use Codex to work on GitHub issues:
 
 ```bash
-gh auth login -h github.com -p https -w
+GH_TOKEN="$(gh auth token)" codex
 ```
-
-This starts GitHub CLI's browser/device login flow:
-
-1. Copy the one-time code that `gh` prints in Codex
-2. Open `https://github.com/login/device`
-3. Paste the code and approve access
-4. Return to Codex and verify the login:
-
-```bash
-gh auth status -h github.com
-```
-
-If `gh auth status` reports that the token is invalid, clear the saved account and repeat the login flow:
-
-```bash
-gh auth logout -h github.com -u <your-github-username>
-gh auth login -h github.com -p https -w
-gh auth status -h github.com
-```
-
-Codex may ask for elevated permission for these commands because GitHub CLI stores auth state in your home directory.
-
 
 ## About The Practice App
 
