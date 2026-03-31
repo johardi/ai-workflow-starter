@@ -53,6 +53,8 @@ class TestBuilderView:
         assert resp.status_code == 200
         assert b"Field Settings" not in resp.content  # No field selected yet
         assert bytes(str(f.title), "utf-8") in resp.content
+        assert b'hx-confirm="Delete this field?"' not in resp.content
+        assert b"Delete this field?" in resp.content
 
 
 @pytest.mark.django_db
