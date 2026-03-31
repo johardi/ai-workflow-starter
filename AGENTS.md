@@ -26,6 +26,12 @@ Use it for requests like:
 - "Fix GitHub ticket 7"
 - "Work on this GitHub issue"
 
+Default completion rule for issue work:
+- Unless the user explicitly limits scope, complete the full workflow through PR creation.
+- Do not stop after implementation or verification if branch creation, commit, push, review, and PR creation are still possible.
+- Treat requests like "implement ticket #4" or "fix issue #7" as instructions to carry the issue through branch, commit, push, and PR, not just code changes.
+- If a later workflow step cannot be completed, explain the blocker and continue as far as possible instead of stopping early.
+
 ### `frontend-design`
 
 Use the `frontend-design` skill when the task requires deciding, designing, or implementing frontend UI.
