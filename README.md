@@ -133,7 +133,7 @@ Add Serena to Codex:
 codex mcp add serena uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context codex --no-dashboard --project "$PWD"
 ```
 
-### Context7
+### Context7 (Optional)
 
 You can add Context7 to Codex with either a local `npx` server or the hosted MCP endpoint.
 
