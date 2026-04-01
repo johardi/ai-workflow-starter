@@ -120,7 +120,7 @@ These MCP servers are recommended for this onboarding workflow:
 Install Playwright MCP directly with Codex:
 
 ```bash
-codex mcp add playwright npx "@playwright/mcp@latest"
+codex mcp add playwright npx "@playwright/mcp@latest" --headless
 ```
 
 ### Serena
