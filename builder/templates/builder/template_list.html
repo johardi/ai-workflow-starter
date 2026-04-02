@@ -17,12 +17,24 @@
   {% if templates %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for t in templates %}
-    <a href="{% url 'builder:builder' t.pk %}"
-       class="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
-      <h2 class="font-semibold text-gray-900 truncate">{{ t.title|default:t.name }}</h2>
-      <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
-      <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
-    </a>
+    <div class="group relative bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
+      <form method="post"
+            action="{% url 'builder:delete' t.pk %}"
+            class="absolute right-3 top-3 z-10"
+            onsubmit="return confirm('Delete this form template? This cannot be undone.');">
+        {% csrf_token %}
+        <button type="submit"
+                class="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-medium text-red-600 opacity-0 shadow-sm transition hover:border-red-300 hover:bg-red-50 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 group-hover:opacity-100"
+                aria-label="Delete {{ t.title|default:t.name }}">
+          Delete
+        </button>
+      </form>
+      <a href="{% url 'builder:builder' t.pk %}" class="block">
+        <h2 class="pr-12 font-semibold text-gray-900 truncate">{{ t.title|default:t.name }}</h2>
+        <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
+        <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
+      </a>
+    </div>
     {% endfor %}
   </div>
   {% else %}
