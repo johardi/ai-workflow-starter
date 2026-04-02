@@ -53,6 +53,13 @@ class TemplateCreateView(View):
         return redirect("builder:builder", pk=template.pk)
 
 
+class TemplateDeleteView(View):
+    def delete(self, request, pk):
+        template = get_object_or_404(FormTemplate, pk=pk)
+        template.delete()
+        return HttpResponse("")
+
+
 # --- Builder (3-panel view) ---
 
 
