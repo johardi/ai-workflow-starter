@@ -3,8 +3,8 @@ import json
 import pytest
 from django.test import Client
 
-from builder.models import FormSection, FormTemplate
-from .factories import create_field, create_section, create_template
+from builder.models import EnumDefinition, FormField, FormSection, FormTemplate
+from .factories import create_enum, create_field, create_section, create_template
 
 
 @pytest.fixture
@@ -43,6 +43,22 @@ class TestTemplateCreateView:
         assert t.title == "Untitled Form"
         assert t.sections.count() == 1
         assert t.sections.first().is_root is True
+
+
+@pytest.mark.django_db
+class TestTemplateDeleteView:
+    def test_delete_template(self, client, template_with_field):
+        t, s, f = template_with_field
+        enum_def = create_enum(t)
+
+        resp = client.post(f"/forms/{t.pk}/delete/")
+
+        assert resp.status_code == 302
+        assert resp.headers["Location"] == "/forms/"
+        assert not FormTemplate.objects.filter(pk=t.pk).exists()
+        assert not FormSection.objects.filter(pk=s.pk).exists()
+        assert not FormField.objects.filter(pk=f.pk).exists()
+        assert not EnumDefinition.objects.filter(pk=enum_def.pk).exists()
 
 
 @pytest.mark.django_db
