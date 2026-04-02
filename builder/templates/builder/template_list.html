@@ -2,7 +2,7 @@
 {% block title %}My Forms — LinkML Form Builder{% endblock %}
 
 {% block body %}
-<div class="max-w-4xl mx-auto py-10 px-4">
+<div class="max-w-5xl mx-auto py-10 px-4">
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-2xl font-bold text-gray-900">My Forms</h1>
     <form method="post" action="{% url 'builder:create' %}">
@@ -14,21 +14,6 @@
     </form>
   </div>
 
-  {% if templates %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    {% for t in templates %}
-    <a href="{% url 'builder:builder' t.pk %}"
-       class="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
-      <h2 class="font-semibold text-gray-900 truncate">{{ t.title|default:t.name }}</h2>
-      <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
-      <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
-    </a>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="text-center py-20">
-    <p class="text-gray-500 mb-4">No forms yet. Create your first one!</p>
-  </div>
-  {% endif %}
+  {% include "builder/partials/template_list_content.html" %}
 </div>
 {% endblock %}
