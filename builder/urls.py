@@ -8,6 +8,7 @@ urlpatterns = [
     # Template list + create
     path("", views.TemplateListView.as_view(), name="list"),
     path("new/", views.TemplateCreateView.as_view(), name="create"),
+    path("<uuid:pk>/delete/", views.TemplateDeleteView.as_view(), name="delete"),
     # Builder view (3-panel)
     path("<uuid:pk>/", views.BuilderView.as_view(), name="builder"),
     # Template settings
