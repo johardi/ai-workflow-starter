@@ -3,8 +3,8 @@ import json
 import pytest
 from django.test import Client
 
-from builder.models import FormSection, FormTemplate
-from .factories import create_field, create_section, create_template
+from builder.models import EnumDefinition, FormSection, FormTemplate, PermissibleValue
+from .factories import create_enum, create_field, create_section, create_template
 
 
 @pytest.fixture
@@ -43,6 +43,32 @@ class TestTemplateCreateView:
         assert t.title == "Untitled Form"
         assert t.sections.count() == 1
         assert t.sections.first().is_root is True
+
+
+@pytest.mark.django_db
+class TestTemplateDeleteView:
+    def test_delete_template(self, client):
+        template = create_template()
+        create_section(template)
+        enum_def = create_enum(template)
+
+        resp = client.post(f"/forms/{template.pk}/delete/")
+
+        assert resp.status_code == 302
+        assert resp.headers["Location"] == "/forms/"
+        assert FormTemplate.objects.filter(pk=template.pk).count() == 0
+        assert FormSection.objects.filter(template=template).count() == 0
+        assert EnumDefinition.objects.filter(pk=enum_def.pk).count() == 0
+        assert PermissibleValue.objects.count() == 0
+
+    def test_list_includes_delete_action(self, client, template_with_field):
+        t, _, _ = template_with_field
+
+        resp = client.get("/forms/")
+
+        assert resp.status_code == 200
+        assert bytes(f"/forms/{t.pk}/delete/", "utf-8") in resp.content
+        assert b"Delete this form template? This cannot be undone." in resp.content
 
 
 @pytest.mark.django_db
