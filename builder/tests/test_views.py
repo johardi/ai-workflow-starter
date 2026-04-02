@@ -4,7 +4,7 @@ import pytest
 from django.test import Client
 
 from builder.models import FormSection, FormTemplate
-from .factories import create_field, create_section, create_template
+from .factories import create_enum, create_field, create_section, create_template
 
 
 @pytest.fixture
@@ -43,6 +43,23 @@ class TestTemplateCreateView:
         assert t.title == "Untitled Form"
         assert t.sections.count() == 1
         assert t.sections.first().is_root is True
+
+
+@pytest.mark.django_db
+class TestTemplateDeleteView:
+    def test_delete_template(self, client):
+        template = create_template()
+        section = create_section(template)
+        create_field(section)
+        enum_def = create_enum(template)
+
+        resp = client.post(f"/forms/{template.pk}/delete/")
+
+        assert resp.status_code == 302
+        assert resp.headers["Location"] == "/forms/"
+        assert FormTemplate.objects.filter(pk=template.pk).count() == 0
+        assert FormSection.objects.filter(pk=section.pk).count() == 0
+        assert template.enums.filter(pk=enum_def.pk).count() == 0
 
 
 @pytest.mark.django_db

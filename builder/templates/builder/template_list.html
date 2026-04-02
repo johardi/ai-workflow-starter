@@ -17,12 +17,24 @@
   {% if templates %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for t in templates %}
-    <a href="{% url 'builder:builder' t.pk %}"
-       class="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
-      <h2 class="font-semibold text-gray-900 truncate">{{ t.title|default:t.name }}</h2>
-      <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
-      <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
-    </a>
+    <div class="group relative">
+      <a href="{% url 'builder:builder' t.pk %}"
+         class="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
+        <h2 class="font-semibold text-gray-900 truncate pr-10">{{ t.title|default:t.name }}</h2>
+        <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
+        <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
+      </a>
+      <form method="post"
+            action="{% url 'builder:delete' t.pk %}"
+            class="absolute top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+        {% csrf_token %}
+        <button type="submit"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-200"
+                aria-label="Delete {{ t.title|default:t.name }}">
+          <i class="fa-solid fa-trash-can text-sm" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
     {% endfor %}
   </div>
   {% else %}
