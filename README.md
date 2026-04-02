@@ -154,7 +154,7 @@ Serena is useful for symbol-aware code exploration in larger repositories.
 Add Serena to Codex:
 
 ```bash
-codex mcp add serena uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context codex --no-dashboard --project "$PWD"
+codex mcp add serena uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context codex --open-web-dashboard False --project "$PWD"
 ```
 
 #### C. Context7 (Optional)
