@@ -17,12 +17,32 @@
   {% if templates %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for t in templates %}
-    <a href="{% url 'builder:builder' t.pk %}"
-       class="block bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition">
-      <h2 class="font-semibold text-gray-900 truncate">{{ t.title|default:t.name }}</h2>
-      <p class="text-sm text-gray-500 mt-1">v{{ t.version }}</p>
-      <p class="text-xs text-gray-400 mt-2">Updated {{ t.updated_at|timesince }} ago</p>
-    </a>
+    <article id="template-{{ t.pk }}"
+             class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-lg">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 opacity-70"></div>
+      <a href="{% url 'builder:builder' t.pk %}"
+         class="block p-5 pr-16">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-[0.65rem] font-mono uppercase tracking-[0.24em] text-stone-400">Form Template</p>
+            <h2 class="mt-2 truncate text-lg font-semibold text-stone-900">{{ t.title|default:t.name }}</h2>
+          </div>
+          <span class="rounded-full bg-stone-100 px-2.5 py-1 text-[0.7rem] font-medium text-stone-500">v{{ t.version }}</span>
+        </div>
+        <p class="mt-6 text-xs uppercase tracking-[0.22em] text-stone-400">Updated {{ t.updated_at|timesince }} ago</p>
+      </a>
+      <button type="button"
+              title="Delete form"
+              aria-label="Delete {{ t.title|default:t.name }}"
+              hx-delete="{% url 'builder:delete' t.pk %}"
+              hx-target="#template-{{ t.pk }}"
+              hx-swap="outerHTML"
+              hx-confirm="Delete this form template and all of its sections, fields, and enums?"
+              class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-400 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 sm:opacity-0 sm:group-hover:opacity-100"
+              onclick="event.stopPropagation();">
+        <i class="fa-solid fa-trash-can text-sm"></i>
+      </button>
+    </article>
     {% endfor %}
   </div>
   {% else %}
