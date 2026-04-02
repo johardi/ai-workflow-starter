@@ -77,11 +77,35 @@ The skills installer commands below use `npx`.
 brew install node
 ```
 
-### 5. Install Required Skills
+### 5. Fork And Clone Your Copy
 
-Install the skills used in this onboarding workflow.
+Start from your own fork so your work happens in your GitHub account before you open a pull request upstream.
 
-#### # Install the GitHub issue workflow skill
+#### A. Fork the repository on GitHub
+
+Use the GitHub web UI to fork the upstream repository into your own account.
+
+#### B. Clone your fork locally
+
+With GitHub CLI:
+
+```bash
+git clone git@github.com:<your-github-username>/ai-workflow-starter.git
+cd ai-workflow-starter
+```
+
+#### C. Add the upstream remote
+
+```bash
+git remote add upstream git@github.com:johardi/ai-workflow-starter.git
+git remote -v
+```
+
+### 6. Install Required Skills
+
+Install the skills used in this onboarding workflow. Make sure you are already in the project directory before installing the skills.
+
+#### A. Install the GitHub issue workflow skill
 
 ```bash
 npx skills add https://github.com/giuseppe-trisciuoglio/developer-kit --skill github-issue-workflow
@@ -99,7 +123,7 @@ For each skill install, use the same prompt flow:
 2. When asked for the installation scope, select `Project`
 3. When asked whether to proceed, select `Yes`
 
-#### # Install the front-end design skill
+#### B. Install the front-end design skill
 
 Repeat the same process as above:
 
@@ -107,7 +131,7 @@ Repeat the same process as above:
 npx skills add https://github.com/anthropics/skills --skill frontend-design
 ```
 
-## Install MCP Servers for Codex
+### 7. Install MCP Servers for Codex
 
 These MCP servers are recommended for this onboarding workflow:
 
@@ -115,7 +139,7 @@ These MCP servers are recommended for this onboarding workflow:
 - `Serena`: semantic code navigation and editing support
 - `Context7`: up-to-date library and framework documentation
 
-### Playwright
+#### A. Playwright
 
 Install Playwright MCP directly with Codex:
 
@@ -123,7 +147,7 @@ Install Playwright MCP directly with Codex:
 codex mcp add playwright npx "@playwright/mcp@latest" --headless
 ```
 
-### Serena
+#### B. Serena
 
 Serena is useful for symbol-aware code exploration in larger repositories.
 
@@ -133,7 +157,7 @@ Add Serena to Codex:
 codex mcp add serena uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context codex --no-dashboard --project "$PWD"
 ```
 
-### Context7 (Optional)
+#### C. Context7 (Optional)
 
 You can add Context7 to Codex with either a local `npx` server or the hosted MCP endpoint.
 
@@ -151,30 +175,6 @@ CONTEXT7_API_KEY = "your-api-key-string"
 ```
 
 Create an account in https://context7.com/ and generate the API key.
-
-## Fork And Clone Your Copy
-
-Start from your own fork so your work happens in your GitHub account before you open a pull request upstream.
-
-### 1. Fork the repository on GitHub
-
-Use the GitHub web UI to fork the upstream repository into your own account.
-
-### 2. Clone your fork locally
-
-With GitHub CLI:
-
-```bash
-git clone git@github.com:<your-github-username>/ai-workflow-starter.git
-cd ai-workflow-starter
-```
-
-### 3. Add the upstream remote
-
-```bash
-git remote add upstream git@github.com:johardi/ai-workflow-starter.git
-git remote -v
-```
 
 ## Run The Project Locally
 
