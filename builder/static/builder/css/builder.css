@@ -101,6 +101,75 @@ input[type="checkbox"] {
   background-color: #fafaf8;
 }
 
+.field-delete-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+  border: 1.5px solid #fdba74;
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.875rem;
+  box-shadow: 0 10px 24px rgba(249, 115, 22, 0.12);
+}
+
+.field-delete-confirm-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9a3412;
+}
+
+.field-delete-confirm-copy {
+  font-size: 0.6875rem;
+  color: #c2410c;
+  margin-top: 0.15rem;
+}
+
+.field-delete-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.field-delete-cancel-btn,
+.field-delete-submit-btn {
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.55rem 0.85rem;
+  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.field-delete-cancel-btn {
+  color: #9a3412;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid #fdba74;
+}
+
+.field-delete-submit-btn {
+  color: white;
+  background: #c2410c;
+  border: 1px solid #c2410c;
+  box-shadow: 0 8px 18px rgba(194, 65, 12, 0.2);
+}
+
+.field-delete-cancel-btn:hover,
+.field-delete-submit-btn:hover {
+  transform: translateY(-1px);
+}
+
+.field-delete-cancel-btn:hover {
+  background: white;
+  border-color: #fb923c;
+}
+
+.field-delete-submit-btn:hover {
+  background: #9a3412;
+  border-color: #9a3412;
+}
+
 /* Left popup action menu */
 .field-actions {
   position: absolute;

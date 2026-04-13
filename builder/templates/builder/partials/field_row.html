@@ -2,10 +2,11 @@
 
 <div id="field-{{ field.pk }}"
      class="field-row relative"
-     data-field-id="{{ field.pk }}">
+     data-field-id="{{ field.pk }}"
+     x-data="{ confirmingDelete: false }">
 
   <!-- Left popup menu (visible only when selected) -->
-  <div class="field-actions">
+  <div class="field-actions" x-show="!confirmingDelete" x-transition.opacity>
     <button class="field-handle field-action-btn" title="Drag to reorder" @click.stop>
       <i class="fa-solid fa-grip-vertical text-xs"></i>
     </button>
@@ -19,17 +20,15 @@
     </button>
     <button class="field-action-btn"
             title="Remove"
-            hx-delete="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
-            hx-target="#field-{{ field.pk }}"
-            hx-swap="outerHTML"
-            hx-confirm="Delete this field?"
-            @click.stop="deselectField()">
+            @click.stop="confirmingDelete = true; deselectField()">
       <i class="fa-solid fa-xmark text-xs"></i>
     </button>
   </div>
 
   <!-- Card body -->
-  <div class="field-card flex items-start justify-between"
+  <div x-show="!confirmingDelete"
+       x-transition.opacity.duration.150ms
+       class="field-card flex items-start justify-between"
        hx-get="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
        hx-target="#config-panel"
        hx-swap="innerHTML"
@@ -47,6 +46,30 @@
       <div class="text-xs text-stone-500 font-medium mt-0.5">
         <i class="{{ field.range_type|field_icon_class }} mr-1 text-stone-400"></i>{{ field.get_range_type_display }}
       </div>
+    </div>
+  </div>
+
+  <div x-show="confirmingDelete"
+       x-transition.opacity.duration.150ms
+       class="field-delete-confirm">
+    <div>
+      <p class="field-delete-confirm-title">Delete this field?</p>
+      <p class="field-delete-confirm-copy">This removes the field from the form canvas immediately.</p>
+    </div>
+    <div class="field-delete-confirm-actions">
+      <button type="button"
+              class="field-delete-cancel-btn"
+              @click.stop="confirmingDelete = false">
+        Cancel
+      </button>
+      <button type="button"
+              class="field-delete-submit-btn"
+              hx-delete="{% url 'builder:field_detail' template.pk field.section_id field.pk %}"
+              hx-target="#field-{{ field.pk }}"
+              hx-swap="outerHTML"
+              @click.stop>
+        Delete
+      </button>
     </div>
   </div>
 </div>
